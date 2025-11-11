@@ -8,7 +8,7 @@ It allows multiple users to draw simultaneously on a shared canvas with live syn
 ## 🚀 Features
 
 - 🖌️ **Drawing Tools** – Brush, Eraser, adjustable colors, and stroke width  
-- 🌈 **Brush Styles** – Solid, Dotted, and Dashed brushes  
+- 🌈 **Brush Styles** – Solid and Dotted brushes  
 - ⚡ **Real-time Sync** – Instantly reflect strokes and cursor movements across all connected users  
 - 👥 **User Tracking** – Shows the number of users online in real time  
 - ↩️ **Undo/Redo** – Revert or restore strokes globally  
@@ -32,7 +32,7 @@ It allows multiple users to draw simultaneously on a shared canvas with live syn
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/collaborative-canvas.git
+git clone https://github.com/prajeet-shah/collaborative-canvas.git
 cd collaborative-canvas
 ```
 
