@@ -3,14 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <title>Collaborative Canvas</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <header>
+    <header class="desktop-header">
       <h1>Collaborative Canvas</h1>
       <div class="tools">
-       
         <label>
           Tool:
           <select id="tool">
@@ -19,36 +26,83 @@
           </select>
         </label>
 
-     
         <label>
           Brush Style:
           <select id="brushStyle">
             <option value="solid">Solid</option>
             <option value="dotted">Dotted</option>
+            <option value="dashed">Dashed</option>
           </select>
         </label>
 
-        
         <label>
           Color:
           <input id="color" type="color" value="#222222" />
         </label>
 
-       
         <label>
           Width:
           <input id="width" type="range" min="1" max="40" value="4" />
         </label>
 
-        
         <button id="undo">Undo</button>
         <button id="redo">Redo</button>
 
-       
         <span id="latency">⏱️–</span>
         <span id="users"></span>
       </div>
     </header>
+
+    <header class="mobile-header">
+      <div class="mobile-header-left">
+        <h1>Collaborative Canvas</h1>
+      </div>
+      <div class="mobile-header-right">
+        <span id="mobileLatency">⏱️–</span>
+        <span id="mobileUsers">👥–</span>
+      </div>
+    </header>
+
+    <button id="mobileMenuButton" class="mobile-menu-button">☰</button>
+
+    <div id="mobileSidebar" class="mobile-sidebar">
+      <div class="sidebar-content">
+        <div class="mobile-tool-group">
+          <label>Tool</label>
+          <select id="mobileTool">
+            <option value="brush">Brush</option>
+            <option value="eraser">Eraser</option>
+          </select>
+        </div>
+
+        <div class="mobile-tool-group">
+          <label>Brush Style</label>
+          <select id="mobileBrushStyle">
+            <option value="solid">Solid</option>
+            <option value="dotted">Dotted</option>
+            <option value="dashed">Dashed</option>
+          </select>
+        </div>
+
+        <div class="mobile-tool-group">
+          <label>Color</label>
+          <input id="mobileColor" type="color" value="#222222" />
+        </div>
+
+        <div class="mobile-tool-group">
+          <label>Brush Size: <span id="mobileWidthValue">4</span></label>
+          <input id="mobileWidth" type="range" min="1" max="40" value="4" />
+        </div>
+
+        <div class="mobile-action-buttons">
+          <button id="mobileUndo" class="action-btn">↶ Undo</button>
+          <button id="mobileRedo" class="action-btn">↷ Redo</button>
+          <button id="mobileClear" class="action-btn">🗑️ Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
     <main>
       <canvas id="canvas"></canvas>

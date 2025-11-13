@@ -115,7 +115,7 @@ export function setupCanvas(canvas) {
 
     
     if (stroke.brushStyle === "dotted") {
-      // Draw small circular dots evenly along the path
+     
       const dx = b.x - a.x;
       const dy = b.y - a.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -140,7 +140,7 @@ export function setupCanvas(canvas) {
       ctx.stroke();
       ctx.setLineDash([]); 
     } else {
-      // Solid continuous line
+      
       ctx.setLineDash([]);
       ctx.beginPath();
       ctx.moveTo(a.x, a.y);
@@ -161,7 +161,7 @@ export function setupCanvas(canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  // Re-render all strokes (undo/redo/history)
+ 
   function replay(history) {
     if (!ctx) return;
     for (const op of history) {
