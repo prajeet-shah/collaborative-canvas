@@ -2,113 +2,291 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Collaborative Canvas</title>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, user-scalable=no"
-    />
+    <title>Collaborative Canvas Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <header class="desktop-header">
-      <h1>Collaborative Canvas</h1>
-      <div class="tools">
-        <label>
-          Tool:
-          <select id="tool">
-            <option value="brush">Brush</option>
-            <option value="eraser">Eraser</option>
-          </select>
-        </label>
-
-        <label>
-          Brush Style:
-          <select id="brushStyle">
-            <option value="solid">Solid</option>
-            <option value="dotted">Dotted</option>
-            <option value="dashed">Dashed</option>
-          </select>
-        </label>
-
-        <label>
-          Color:
-          <input id="color" type="color" value="#222222" />
-        </label>
-
-        <label>
-          Width:
-          <input id="width" type="range" min="1" max="40" value="4" />
-        </label>
-
-        <button id="undo">Undo</button>
-        <button id="redo">Redo</button>
-
-        <span id="latency">⏱️–</span>
-        <span id="users"></span>
-      </div>
-    </header>
-
-    <header class="mobile-header">
-      <div class="mobile-header-left">
-        <h1>Collaborative Canvas</h1>
-      </div>
-      <div class="mobile-header-right">
-        <span id="mobileLatency">⏱️–</span>
-        <span id="mobileUsers">👥–</span>
-      </div>
-    </header>
-
-    <button id="mobileMenuButton" class="mobile-menu-button">☰</button>
-
-    <div id="mobileSidebar" class="mobile-sidebar">
-      <div class="sidebar-content">
-        <div class="mobile-tool-group">
-          <label>Tool</label>
-          <select id="mobileTool">
-            <option value="brush">Brush</option>
-            <option value="eraser">Eraser</option>
-          </select>
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal active">
+      <div class="auth-container">
+        <div class="auth-header">
+          <h1>🎨 Canvas Pro</h1>
+          <p>Collaborative Drawing Platform</p>
+        </div>
+        
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">Login</button>
+          <button class="auth-tab" data-tab="signup">Sign Up</button>
         </div>
 
-        <div class="mobile-tool-group">
-          <label>Brush Style</label>
-          <select id="mobileBrushStyle">
-            <option value="solid">Solid</option>
-            <option value="dotted">Dotted</option>
-            <option value="dashed">Dashed</option>
-          </select>
-        </div>
+        <form id="loginForm" class="auth-form active">
+          <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="loginEmail" placeholder="Email" required autocomplete="email">
+          </div>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="auth-btn">
+            <i class="fas fa-sign-in-alt"></i>
+            Login
+          </button>
+        </form>
 
-        <div class="mobile-tool-group">
-          <label>Color</label>
-          <input id="mobileColor" type="color" value="#222222" />
-        </div>
+        <form id="signupForm" class="auth-form">
+          <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="signupName" placeholder="Full Name" required autocomplete="name">
+          </div>
+          <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="signupEmail" placeholder="Email" required autocomplete="email">
+          </div>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="signupPassword" placeholder="Password" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="auth-btn">
+            <i class="fas fa-user-plus"></i>
+            Sign Up
+          </button>
+        </form>
 
-        <div class="mobile-tool-group">
-          <label>Brush Size: <span id="mobileWidthValue">4</span></label>
-          <input id="mobileWidth" type="range" min="1" max="40" value="4" />
-        </div>
-
-        <div class="mobile-action-buttons">
-          <button id="mobileUndo" class="action-btn">↶ Undo</button>
-          <button id="mobileRedo" class="action-btn">↷ Redo</button>
-          <button id="mobileClear" class="action-btn">🗑️ Clear</button>
+        <div class="auth-footer">
+          <p>Join rooms and create amazing art together!</p>
         </div>
       </div>
     </div>
 
-    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    <!-- Room Selection Modal -->
+    <div id="roomModal" class="room-modal">
+      <div class="room-container">
+        <div class="room-header">
+          <h2>Select a Room</h2>
+          <div class="user-info">
+            <img id="userAvatar" src="" alt="Avatar">
+            <span id="userName"></span>
+            <button id="logoutBtn" class="logout-btn">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
 
-    <main>
-      <canvas id="canvas"></canvas>
-    </main>
+        <div class="room-options-simple">
+          <div class="room-option-main">
+            <button id="joinLobby" class="room-option-btn primary">
+              <div class="room-icon">🎨</div>
+              <h3>Main Lobby</h3>
+              <p>Join the main collaboration room</p>
+            </button>
+          </div>
+
+          <div class="room-option-custom">
+            <h3>Or Join Custom Room</h3>
+            <div class="custom-room-input">
+              <input type="text" id="customRoomId" placeholder="Enter room ID">
+              <button id="joinCustomRoom" class="join-btn">Join Room</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" class="app-container">
+      <header class="desktop-header">
+        <div class="header-left">
+          <h1>🎨 Canvas Pro</h1>
+          <div class="room-info">
+            <span id="currentRoom">LOBBY</span>
+            <span class="room-separator">•</span>
+            <span id="roomUsers">0 users</span>
+          </div>
+        </div>
+        
+        <div class="tools">
+          <div class="tool-group">
+            <label>Tool:</label>
+            <select id="tool">
+              <option value="brush">🖌️ Brush</option>
+              <option value="eraser">🧽 Eraser</option>
+              <option value="rectangle">⬜ Rectangle</option>
+              <option value="square">□ Square</option>
+              <option value="circle">⭕ Circle</option>
+              <option value="triangle">▲ Triangle</option>
+              <option value="line">📏 Line</option>
+            </select>
+          </div>
+
+          <div class="tool-group">
+            <label>Style:</label>
+            <select id="brushStyle">
+              <option value="solid">Solid</option>
+              <option value="dotted">Dotted</option>
+              <option value="dashed">Dashed</option>
+            </select>
+          </div>
+
+          <div class="tool-group">
+            <label>Color:</label>
+            <input id="color" type="color" value="#222222" />
+          </div>
+
+          <div class="tool-group">
+            <label>Size:</label>
+            <input id="width" type="range" min="1" max="40" value="4" />
+            <span id="widthValue">4</span>
+          </div>
+
+          <div class="action-buttons">
+            <button id="undo" class="tool-btn" title="Undo">
+              <i class="fas fa-undo"></i>
+            </button>
+            <button id="redo" class="tool-btn" title="Redo">
+              <i class="fas fa-redo"></i>
+            </button>
+            <button id="clear" class="tool-btn" title="Clear">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+
+          <div class="status-info">
+            <span id="latency" title="Latency">⏱️–</span>
+            <span id="users" title="Online Users">👥–</span>
+            <div class="user-menu">
+              <img id="headerAvatar" src="" alt="Avatar">
+              <button id="changeRoom" class="room-btn">
+                <i class="fas fa-door-open"></i>
+                Change Room
+              </button>
+              <button id="logoutHeader" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <header class="mobile-header">
+        <div class="mobile-header-left">
+          <button id="mobileMenuButton" class="mobile-menu-button">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="mobile-title">
+            <h1>Canvas Pro</h1>
+            <div class="mobile-room-info">
+              <span id="mobileRoom">LOBBY</span>
+              <span class="room-separator">•</span>
+              <span id="mobileRoomUsers">0 users</span>
+            </div>
+          </div>
+        </div>
+        <div class="mobile-header-right">
+          <span id="mobileLatency">⏱️–</span>
+          <button id="mobileRoomButton" class="mobile-room-button">
+            <i class="fas fa-door-open"></i>
+          </button>
+        </div>
+      </header>
+
+      <div id="mobileSidebar" class="mobile-sidebar">
+        <div class="sidebar-header">
+          <h3>Tools</h3>
+          <button class="close-sidebar">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="sidebar-content">
+          <div class="mobile-tool-group">
+            <label>Tool</label>
+            <select id="mobileTool">
+              <option value="brush">🖌️ Brush</option>
+              <option value="eraser">🧽 Eraser</option>
+              <option value="rectangle">⬜ Rectangle</option>
+              <option value="square">□ Square</option>
+              <option value="circle">⭕ Circle</option>
+              <option value="triangle">▲ Triangle</option>
+              <option value="line">📏 Line</option>
+            </select>
+          </div>
+
+          <div class="mobile-tool-group">
+            <label>Brush Style</label>
+            <select id="mobileBrushStyle">
+              <option value="solid">Solid</option>
+              <option value="dotted">Dotted</option>
+              <option value="dashed">Dashed</option>
+            </select>
+          </div>
+
+          <div class="mobile-tool-group">
+            <label>Color</label>
+            <input id="mobileColor" type="color" value="#222222" />
+          </div>
+
+          <div class="mobile-tool-group">
+            <label>Brush Size: <span id="mobileWidthValue">4</span></label>
+            <input id="mobileWidth" type="range" min="1" max="40" value="4" />
+          </div>
+
+          <div class="mobile-action-buttons">
+            <button id="mobileUndo" class="action-btn">
+              <i class="fas fa-undo"></i>
+              Undo
+            </button>
+            <button id="mobileRedo" class="action-btn">
+              <i class="fas fa-redo"></i>
+              Redo
+            </button>
+            <button id="mobileClear" class="action-btn">
+              <i class="fas fa-trash"></i>
+              Clear
+            </button>
+            <button id="mobileLogout" class="action-btn logout">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </button>
+          </div>
+
+          <div class="user-profile-mobile">
+            <img id="mobileAvatar" src="" alt="Avatar">
+            <span id="mobileUserName"></span>
+          </div>
+        </div>
+      </div>
+
+      <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+      <main>
+        <div class="canvas-container">
+          <canvas id="canvas"></canvas>
+          <div class="canvas-overlay">
+            <div class="welcome-message" id="welcomeMessage">
+              <h3>Welcome to Canvas Pro!</h3>
+              <p>Start drawing or invite others to join your room</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="floating-users" id="floatingUsers">
+          <!-- Online users will appear here -->
+        </div>
+      </main>
+
+      <div class="notification-container" id="notificationContainer">
+        <!-- Notifications will appear here -->
+      </div>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="module" src="./main.js"></script>
   </body>
 </html>
